@@ -27,7 +27,7 @@ AlignAfterOpenBracket: Align
 # - None: 不做处理, 即保留开发者的代码
 # - Left: 左对齐
 # - Right: 右对齐
-AlignArrayOfStructures: None
+AlignArrayOfStructures: Right
 
 # 连续赋值语句的对齐，即多个赋值语句连续出现时的对齐策略配置, 包含多个子配置项
 AlignConsecutiveAssignments:
@@ -36,8 +36,8 @@ AlignConsecutiveAssignments:
   # 是否跨过空行, 即多个对齐语句中间有空行时, 是否跨过, 如果要开启连续赋值语句的配置, 建议为false
   AcrossEmptyLines: false
   # 同AcrossComments: 即是否跨过注释, 建议false
-  AcrossComments:  false
-  # 是否跨过复合语句(包括空行及注释), 建议False
+  AcrossComments:  true
+  # 是否跨过复合语句(混合运算符+=会对齐于=（仅限于连续赋值)), 建议False
   AlignCompound:   false
   # 是否(右)对齐赋值操作的操作符, 建议true
   PadOperators:    true
@@ -49,19 +49,19 @@ AlignConsecutiveBitFields:
   # 同AlignConsecutiveAssignments
   AcrossEmptyLines: false
   # 同AlignConsecutiveAssignments
-  AcrossComments:  false
+  AcrossComments:  true
   # 只在AlignConsecutiveAssignments配置中有效, 自动生成的clang-format有此项, 忽略
   AlignCompound:   false
   # 只在AlignConsecutiveAssignments配置中有效, 自动生成的clang-format有此项, 忽略
-  PadOperators:    false
+  PadOperators:    true
 
 # 是否对齐连续声明, 同AlignConsecutiveDeclarations
 AlignConsecutiveDeclarations:
   Enabled:         true
   AcrossEmptyLines: false
-  AcrossComments:  false
+  AcrossComments:  true
   AlignCompound:   false
-  PadOperators:    false
+  PadOperators:    true
 
 # 连续宏定义对齐
 AlignConsecutiveMacros:
@@ -71,23 +71,35 @@ AlignConsecutiveMacros:
   # 只在AlignConsecutiveAssignments配置中有效, 自动生成的clang-format有此项, 忽略
   AlignCompound:   false
   # 只在AlignConsecutiveAssignments配置中有效, 自动生成的clang-format有此项, 忽略
-  PadOperators:    false
+  PadOperators:    true
 
 # 续行符(\\)对齐:
 # - DontAlign: 不做操作
 # - Left: 尽可能向左对齐, 即最长一行代码为准
 # - Right: 跟开发都写的最远的\\对齐(即不会自动缩减你的空格), 建议使用这个
 AlignEscapedNewlines: Right
-
 # 在二元/一元表达式中的操作数对齐, 可选值:
 # - DontAlign: 不做对齐, 在操作数换行后, 将使用ContinuationIndentWidth来对齐
 # - Align: 即换行时, 操作数(or 操作符加操作数)跟上一行的第一个操作数左对齐, 具体操作符要不要换行, 由BreakBeforeBinaryOperators配置决定
 AlignOperands:   Align
-AlignTrailingComments: true
+# 对齐尾部注释
+# Kind的值可以选择为：Leave，Always，Never。
+# leave保留不做格式化，Always对齐尾部注释，Never不对齐尾部注释，但是应用其他的格式化手段，如缩进。
+# OverEmptyLines是跨越的空白行数，超过这个行数的注释不会对齐(分别对齐自身所属段)。
+AlignTrailingComments: 
+  Kind: Always
+  OverEmptyLines: 1
+# 允许参数在下一行上
 AllowAllArgumentsOnNextLine: true
+# 已弃用
 AllowAllParametersOfDeclarationOnNextLine: true
+# 允许声明的参数在下一行上
 AllowShortEnumsOnASingleLine: true
+# 允许短语法块在单行上
+# 可选值: Never，Empty，Always
+# Never从不合并块到单行上, Empty只合并空块到单行上, Always总是合并短块到单行上
 AllowShortBlocksOnASingleLine: Never
+# 允许短枚举在单行上
 AllowShortCaseLabelsOnASingleLine: false
 # 允许短的函数放在同一行, 可选值: None, InlineOnly(定义在类中), Empty(空函数), Inline(定义在类中，空函数), All
 AllowShortFunctionsOnASingleLine: All
@@ -116,10 +128,9 @@ AlwaysBreakTemplateDeclarations: MultiLine
 AttributeMacros:
   - __capability
 # 函数调用时的参数(Arguments)是否放置于一行, false不放置, true强制一个调用参数一行, 建议false
-BinPackArguments: false
+BinPackArguments: true
 # 函数定义参数(Parameters)是否放置于一行, 同BinPackArguments
-BinPackParameters: false
-
+BinPackParameters: true
 # 大括号换行
 BraceWrapping:
   # 在case后的大括号是否换行
@@ -222,7 +233,7 @@ IfMacros:
 # - Preserve: 只对每个代码块排序
 # - Merge: 对所有代码块合并, 并在合并后排序
 # - Regroup: 对所有include块进行分析, 并重新分块, 不建议!
-IncludeBlocks:   Preserve
+IncludeBlocks:   Merge
 # Include Sort选项, 可选:
 # - Never: 永远不, 建议
 # - CaseSensitive: 大小写敏感排序
@@ -258,7 +269,8 @@ IndentGotoLabels: true
 # - BeforeHash: #跟前缩进
 IndentPPDirectives: None
 # extern "C"缩进, 建议AfterExternBlock
-IndentExternBlock: AfterExternBlock
+# 可选项：AfterExternBlock(向后兼容)，NoIndent(不缩进extern扩展块), Indent(缩进extern扩展块)
+IndentExternBlock: NoIndent
 # 模板require是否缩进
 IndentRequiresClause: true
 # 缩进宽度
@@ -301,7 +313,7 @@ PenaltyBreakTemplateDeclaration: 10
 PenaltyExcessCharacter: 1000000
 PenaltyReturnTypeOnItsOwnLine: 60
 PenaltyIndentedWhitespace: 0
-# 指针对齐, 建议Right
+# 指针对齐, 可选项：Left，Right，Middle，建议Right
 PointerAlignment: Right
 # 引用对齐, 可选:
 # - Pointer: 使用'PointerAlignment'配置, 建议使用
@@ -382,12 +394,14 @@ SpacesInParentheses: false
 SpacesInSquareBrackets: false
 # 大括号内是否加space, false
 SpaceBeforeSquareBrackets: false
+
 # 位定义:前后是否增加空格, 可选:
 # - Both: 前后都添加
 # - Before: 只在前增加
 # - After: 只在后增加
 # - None: 不增加, 建议, 没有必要因为过多的space(s)影响代码紧凑
 BitFieldColonSpacing: None
+
 # C++标准, Latest即可
 Standard:        Latest
 StatementAttributeLikeMacros:
